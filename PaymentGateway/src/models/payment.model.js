@@ -21,14 +21,19 @@ const paymentSchema = new mongoose.Schema(
             type: String,
             default: "INR"
         },
+        productId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product",
+            required: true
+        },
         status: {
             type: String,
-            enum: ["pending", "completed", "failed"],
-            default: "pending"
+            enum: ["Pending", "completed", "failed"],
+            default: "Pending"
         }
     },
     { timestamps: true }
 );
 
-const payment =  mongoose.model("payment", paymentSchema);
+const payment = mongoose.model("payment", paymentSchema);
 export default payment;
