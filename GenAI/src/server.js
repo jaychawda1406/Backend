@@ -15,16 +15,27 @@ const model = new ChatGroq({
     apiKey: process.env.GROQ_API_KEY,
 })
 
+const messagesArray = []
+
 while (true) {
     const userInput = await readline.question("Enter your Input: ");
-    const response = await model.stream([
-        {
-            "role": "user",
-            "content": userInput,
-        },
-    ]) //use .stream for tokenwise output
+    messagesArray.push({ //memory in the form of array.
+        role: "user",
+        content: userInput,
+    })
+
+    const response = await model.stream(messagesArray) //use .stream for tokenwise output
+    
+    let assistantResponse = ""
     for await (const chunk of response) {
+        assistantResponse += chunk.content
         process.stdout.write(chunk.content)
     }
+
+    messagesArray.push({
+        role: "assistant",
+        content: assistantResponse,
+    })
+    
     process.stdout.write("\n");
 }
