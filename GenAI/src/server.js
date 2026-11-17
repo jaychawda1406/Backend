@@ -60,6 +60,7 @@ const agent = createAgent({
 
 while (true) {
     const userInput = await readline.question("Enter your input : ");
+
     const stream = await agent.stream({
         messages: [
             {
