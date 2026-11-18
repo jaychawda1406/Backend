@@ -7,10 +7,10 @@ dotenv.config();
 
 const events = [];
 
-const createEventTool = tool( //Tool is just like a function but LLM can call it directly
+const createEventTool = tool( //Tool is just like a function but agent cannot directly call it,it just request for tool call,it knows what is does,what is the name etc etc.
     async function ({ date, title, description }) {
 
-        console.log("Creating Event",{date,title,description})
+        console.log("Creating Event", { date, title, description })
 
         events.push({
             date,
@@ -32,7 +32,7 @@ const createEventTool = tool( //Tool is just like a function but LLM can call it
 
 const getEventsTool = tool(
     async function ({ }) {
-        console.log("Getting Events",events)
+        console.log("Getting Events", events)
         return events;
     },
     {
