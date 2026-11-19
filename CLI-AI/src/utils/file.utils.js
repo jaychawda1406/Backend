@@ -1,6 +1,7 @@
 import fs from 'fs/promises' // Enables async reading, writing, and managing of files and directories
 import { CONFIG_DIR, HOME_DIR } from './constant.js'
 import path from "path"
+import axios from "axios"
 
 /* Return the content of the settings file (create if it doesnt exist) */
 export async function getSettingsFile() {
@@ -54,5 +55,30 @@ export async function saveApiKey(apiKey) {
  */
 export async function getApiKey() {
     const settings = await getSettingsFile()
-    return settings.apiKey
+    const apiKey = settings.apiKey
+
+    if (!apiKey) {
+        throw new Error("API key not found. Please save your API key first.")
+    }
+
+    /*
+     * Validates the provided Groq API key by querying the models endpoint.
+     * Returns the key object if valid, or a user-friendly error message
+     * if the request fails due to an invalid or expired key.
+     */
+    try {
+        const response = await axios.get("https://api.groq.com/openai/v1/models", {
+            headers: {
+                Authorization: `Bearer ${apiKey}`
+            }
+        })
+        return {
+            apiKey
+        }
+
+    } catch (err) {
+        return {
+            error: "Invalid API key"
+        }
+    }
 }
