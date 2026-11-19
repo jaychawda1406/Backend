@@ -1,3 +1,3 @@
 #!/usr/bin/env node
-
-console.log("Hello From Custom CLI")
+import main from "./src/main.js"
+main();
