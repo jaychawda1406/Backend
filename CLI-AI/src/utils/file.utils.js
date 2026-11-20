@@ -75,7 +75,6 @@ export async function getApiKey() {
         return {
             apiKey
         }
-
     } catch (err) {
         return {
             error: "Invalid API key"

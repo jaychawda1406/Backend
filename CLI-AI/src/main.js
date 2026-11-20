@@ -1,5 +1,6 @@
 import { getSettingsFile, saveApiKey, getApiKey } from "./utils/file.utils.js";
 import rl from "./utils/realine.js";
+import { initGraph } from "./graph/graph.js";
 
 async function main() {
     const settings = await getSettingsFile();
@@ -20,6 +21,8 @@ async function main() {
     }
 
     const apiKey = await getApiKey()
+    
+    await initGraph();
 
     rl.close();
 }
