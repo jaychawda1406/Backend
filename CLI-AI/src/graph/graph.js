@@ -1,18 +1,21 @@
-import { StateGraph, END, START } from "@langchain/langgraph"
+import { StateGraph, END, START } from "@langchain/langgraph"// LangGraph se workflow banane wali main class (StateGraph) aur graph ke entry/exit points (START, END) import kar rahe hain
 import { LLMNode } from "./node.js";
 import { HumanMessage } from "@langchain/core/messages";// User ke plain text input ko structured LangChain message format mein wrap karne ke liye HumanMessage import kar rahe hain
 import rl from "../utils/realine.js";
 import * as z from "zod";
+
+// LangGraph ke state (memory) ka structure define karta hai jisme saare chat messages ek array ke andar store honge
 const stateFormat = z.object({
     messages: z.array(z.any())
 })
 
-//Creation of state graph
+// LangGraph workflow banata aur compile karta hai:
+// START -> LLMNode (AI response generate karta hai) -> END
 const graph = new StateGraph(stateFormat)
-    .addNode("LLMNode", LLMNode)
-    .addEdge(START, "LLMNode")
-    .addEdge("LLMNode", END)
-    .compile();
+    .addNode("LLMNode", LLMNode)   // Graph mein "LLMNode" naam ka step/node register karta hai
+    .addEdge(START, "LLMNode")     // Graph start hote hi seedha "LLMNode" par bhejta hai
+    .addEdge("LLMNode", END)       // "LLMNode" ka kaam poora hone ke baad workflow ko END karta hai
+    .compile();                    // Poora graph structure lock karke executable/runnable banata hai
 
 /**
 * Yeh function terminal mein ek continuous (infinite) chat loop start karta hai
@@ -27,13 +30,15 @@ const graph = new StateGraph(stateFormat)
 * aur response ko terminal mein print (`console.log`) bhi nahi kiya gaya hai.
 */
 export default async function initGraph() {
+    let messagesArray = []
     while (true) {
         const userInput = await rl.question("Enter Your Input: ")
+
+        messagesArray.push(new HumanMessage(userInput))
         const response = await graph.invoke({
-            messages: [
-                new HumanMessage(userInput)
-            ]
+            messages: messagesArray
         })
-        console.log("[AI]", response)
+
+        messagesArray = response.messages
     }
 }

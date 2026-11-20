@@ -41,8 +41,8 @@ export async function getSettingsFile() {
  */
 export async function saveApiKey(apiKey) {
     const settingsFilePath = path.join(CONFIG_DIR, "settings.json")
-
     const settingsContent = await getSettingsFile()
+    
     await fs.writeFile(settingsFilePath, JSON.stringify({
         ...settingsContent,
         apiKey
