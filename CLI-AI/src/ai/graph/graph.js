@@ -1,7 +1,7 @@
 import { StateGraph, END, START } from "@langchain/langgraph"// LangGraph se workflow banane wali main class (StateGraph) aur graph ke entry/exit points (START, END) import kar rahe hain
-import { LLMNode } from "./node.js";
+import { LLMNode, ToolNode } from "./node.js";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages"; // User ke input aur system ke instructions ko structured LangChain message format mein wrap karne ke liye HumanMessage aur SystemMessage import kar rahe hain
-import rl from "../../utils/realine.js";
+import rl from "../../utils/readline.js";
 import * as z from "zod";
 console.log(process.cwd())
 
@@ -11,12 +11,24 @@ const stateFormat = z.object({
 })
 
 // LangGraph workflow banata aur compile karta hai:
-// START -> LLMNode (AI response generate karta hai) -> END
+// START -> LLMNode (AI response generate karta hai)-> ToolNode -> END
 const graph = new StateGraph(stateFormat)
     .addNode("LLMNode", LLMNode)   // Graph mein "LLMNode" naam ka step/node register karta hai
+    .addNode("ToolNode", ToolNode)  // Graph mein "ToolNode" naam ka step/node register karta hai
     .addEdge(START, "LLMNode")     // Graph start hote hi seedha "LLMNode" par bhejta hai
-    .addEdge("LLMNode", END)       // "LLMNode" ka kaam poora hone ke baad workflow ko END karta hai
-    .compile();                    // Poora graph structure lock karke executable/runnable banata hai
+    .addEdge("ToolNode", "LLMNode") //Graph ToolNode se LLMNode par bhejta hai.
+    .addConditionalEdges("LLMNode",
+        (state) => {
+            const lastMessage = state.messages[state.messages.length - 1]
+
+            if (lastMessage.tool_calls && lastMessage.tool_calls.length > 0) {
+                return "ToolNode"
+            }
+            return "__end__"
+        },
+        ["ToolNode", "__end__"]
+    )
+    .compile();// Poora graph structure lock karke executable/runnable banata hai
 
 /**
 * Yeh function terminal mein ek continuous (infinite) chat loop start karta hai

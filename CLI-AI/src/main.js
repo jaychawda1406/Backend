@@ -2,7 +2,7 @@
 import { getSettingsFile, saveApiKey, getApiKey } from "./utils/file.utils.js";
 
 // Terminal se user input lene aur chat session khatam hone par readline interface close karne ke liye rl import kar rahe hain
-import rl from "./utils/realine.js";
+import rl from "./utils/readline.js";
 
 // LangGraph ka continuous terminal chat loop start karne wala main function import kar rahe hain
 import initGraph from "./ai/graph/graph.js";
