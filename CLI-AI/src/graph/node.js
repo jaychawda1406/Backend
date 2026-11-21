@@ -6,8 +6,7 @@ import { AIMessage } from "langchain"
  * LangGraph ka main LLM node jo conversation history lekar AI se response generate karta hai,
  * usse terminal par real-time stream karta hai, aur updated chat history state ko return karta hai.
  */
-export async function LLMNode(state) {
-
+export async function LLMNode(state, config) {
     // Groq AI platform se connect hone ke liye ChatGroq model ka instance (object) banata hai
     const model = new ChatGroq({
         model: "openai/gpt-oss-120b",          // Groq server par kaunsa AI model run karna hai, uska naam specify karta hai

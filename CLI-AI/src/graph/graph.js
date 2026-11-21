@@ -36,10 +36,11 @@ export default async function initGraph() {
     while (true) {
         const userInput = await rl.question("Enter Your Input: ")
 
+        if (userInput.toLowerCase() === "/bye") { //Logic for stopping the graph to run
+            break;
+        }
         messagesArray.push(new HumanMessage(userInput))
-        const response = await graph.invoke({
-            messages: messagesArray
-        })
+        const response = await graph.invoke({ messages: messagesArray }, { context: { username: "Rohan" } })
 
         messagesArray = response.messages
     }
