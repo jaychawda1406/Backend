@@ -22,5 +22,4 @@ export const upsertFilesTool = tool(
             content: z.string().describe("content of the file to be created/update")
         }))
     })
-}
-);
+});
