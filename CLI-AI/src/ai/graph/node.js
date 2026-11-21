@@ -1,6 +1,7 @@
 import { ChatGroq } from "@langchain/groq"
-import { getApiKey } from "../utils/file.utils.js";
+import { getApiKey } from "../../utils/file.utils.js";
 import { AIMessage } from "langchain"
+import { upsertFilesTool } from "../tools/file.tool.js"
 
 /**
  * LangGraph ka main LLM node jo conversation history lekar AI se response generate karta hai,
@@ -13,8 +14,10 @@ export async function LLMNode(state, config) {
         apiKey: (await getApiKey()).apiKey    // Local settings file se saved Groq API key fetch karke authentication ke liye pass karta hai
     });
 
+    const modelWithTool = model.bindTools([upsertFilesTool]);// Model ko upsertFilesTool ke saath bind kar rahe hain taaki AI zaroorat padne par files create/update karne ke liye is tool ko call kar sake
+
     // AI model ko ab tak ki poori conversation history bhej kar response ko tukdon (stream) mein mangwate hain
-    const stream = await model.stream(state.messages);
+    const stream = await modelWithTool.stream(state.messages);
 
     // Terminal mein bina new line (Enter) ke "[AI]: " prefix print karte hain taaki reply iske aage se shuru ho
     process.stdout.write("[AI]: ");

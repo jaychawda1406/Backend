@@ -5,7 +5,7 @@ import { getSettingsFile, saveApiKey, getApiKey } from "./utils/file.utils.js";
 import rl from "./utils/realine.js";
 
 // LangGraph ka continuous terminal chat loop start karne wala main function import kar rahe hain
-import initGraph from "./graph/graph.js";
+import initGraph from "./ai/graph/graph.js";
 
 /**
  * Yeh CLI application ka main entry function hai jo poora startup flow handle karta hai:
