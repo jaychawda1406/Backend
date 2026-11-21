@@ -1,6 +1,6 @@
 import { StateGraph, END, START } from "@langchain/langgraph"// LangGraph se workflow banane wali main class (StateGraph) aur graph ke entry/exit points (START, END) import kar rahe hain
 import { LLMNode } from "./node.js";
-import { HumanMessage } from "@langchain/core/messages";// User ke plain text input ko structured LangChain message format mein wrap karne ke liye HumanMessage import kar rahe hain
+import { HumanMessage, SystemMessage } from "@langchain/core/messages"; // User ke input aur system ke instructions ko structured LangChain message format mein wrap karne ke liye HumanMessage aur SystemMessage import kar rahe hain
 import rl from "../utils/realine.js";
 import * as z from "zod";
 
@@ -30,7 +30,9 @@ const graph = new StateGraph(stateFormat)
 * aur response ko terminal mein print (`console.log`) bhi nahi kiya gaya hai.
 */
 export default async function initGraph() {
-    let messagesArray = []
+    let messagesArray = [
+        new SystemMessage("You respond under 50 words and you always communicate in Cavemen language.")
+    ]
     while (true) {
         const userInput = await rl.question("Enter Your Input: ")
 
